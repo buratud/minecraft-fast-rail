@@ -1,0 +1,19 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Fast rails resource pack",
+    "description": "Place rails faster than ever before!",
+    "uuid": "6e2b8c25-f787-47d6-b068-5ee57ad27750",
+    "version": [1, 0, 0],
+    "min_engine_version": [1, 20, 30]
+  },
+  "modules": [
+    {
+      "description": "Fast rails resource pack",
+      "type": "resources",
+      "uuid": "c7361e68-ccbb-4394-820f-60161f00a8d3",
+      "version": [1, 0, 0]
+    }
+  ],
+  "dependencies": [{ "uuid": "94df7f64-758d-43af-a5f1-82393a46ce2c", "version": [1, 0, 0] }]
+}
