@@ -4,7 +4,9 @@ import {
   CustomComponentParameters,
   world,
   ItemComponentUseOnEvent,
+  ItemStack,
 } from "@minecraft/server";
+import { MinecraftItemTypes } from "@minecraft/vanilla-data";
 
 system.beforeEvents.startup.subscribe((initEvent) => {
   initEvent.itemComponentRegistry.registerCustomComponent("yay:place_rail", {
@@ -40,25 +42,41 @@ system.beforeEvents.startup.subscribe((initEvent) => {
 
       let placed = 0;
       let lastRailLoc = null;
-      for (let i = 0; i < 15; i++) {
-        const loc = { x: block.x + dx * i, y: block.y + 1, z: block.z + dz * i };
-        const targetBlock = dimension.getBlock(loc);
-        // Only place if block above is air or undefined
-        if (targetBlock && (targetBlock.typeId === "minecraft:air" || targetBlock.typeId === undefined)) {
-          targetBlock.setType("minecraft:rail");
-          placed++;
-          lastRailLoc = loc;
+      // Get the number of items held by the player from inventory
+
+      let itemCount = 1;
+      const inventoryComp = player.getComponent("minecraft:inventory");
+      if (inventoryComp && inventoryComp.container) {
+        for (let slot = 0; slot < inventoryComp.container.size; slot++) {
+          const item = inventoryComp.container.getItem(slot);
+          if (item && item.typeId.startsWith("yay:16_rails")) {
+            itemCount = item.amount;
+            break;
+          }
         }
       }
 
-      // Place powered rail and redstone block at the end
-      if (lastRailLoc) {
-        // world.sendMessage(`Placed ${placed} rails and 1 powered rail with redstone block.`);
-        const poweredRailBlock = dimension.getBlock(lastRailLoc);
-        if (poweredRailBlock) poweredRailBlock.setType("minecraft:golden_rail");
-        const redstoneLoc = { x: lastRailLoc.x, y: lastRailLoc.y - 1, z: lastRailLoc.z };
-        const redstoneBlock = dimension.getBlock(redstoneLoc);
-        if (redstoneBlock) redstoneBlock.setType("minecraft:redstone_block");
+      for (let n = 0; n < itemCount; n++) {
+        let segmentLastLoc = null;
+        for (let i = 0; i < 16; i++) {
+          const loc = { x: block.x + dx * (i + n * 16), y: block.y + 1, z: block.z + dz * (i + n * 16) };
+          const targetBlock = dimension.getBlock(loc);
+          // Only place if block above is air or undefined
+          if (targetBlock && (targetBlock.typeId === "minecraft:air" || targetBlock.typeId === undefined)) {
+            if (i === 15) {
+              // Place powered rail at the end of each segment
+              targetBlock.setType("minecraft:golden_rail");
+              // Place redstone block below powered rail
+              const redstoneLoc = { x: loc.x, y: loc.y - 1, z: loc.z };
+              const redstoneBlock = dimension.getBlock(redstoneLoc);
+              redstoneBlock?.setType("minecraft:redstone_block");
+            } else {
+              targetBlock.setType("minecraft:rail");
+            }
+            placed++;
+            segmentLastLoc = loc;
+          }
+        }
       }
     },
   });

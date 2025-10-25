@@ -9,7 +9,7 @@
       }
     },
     "components": {
-      "minecraft:max_stack_size": 16,
+      "minecraft:max_stack_size": 4,
       "minecraft:icon": "yay:16_rails",
       "minecraft:display_name": {
         "value": "Fast Rails"
