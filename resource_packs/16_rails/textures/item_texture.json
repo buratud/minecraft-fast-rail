@@ -1,7 +1,7 @@
 {
   "resource_pack_name": "Fast rails resource pack",
   "texture_data": {
-    "YAY:16_rails": {
+    "yay:16_rails": {
       "textures": "textures/items/16_rails_item"
     }
   }
